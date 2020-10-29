@@ -3,3 +3,4 @@ Flask-Restful
 Flask-SQLAlchemy
 Flask-JWT-Extended
 requests
+pytest

@@ -8,6 +8,7 @@ WORKDIR /app
 
 #Install packages necessary 
 RUN pip install -r requirements.txt
+RUN apt-get install make
 
 EXPOSE 5000
 

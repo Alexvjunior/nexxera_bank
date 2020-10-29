@@ -1,4 +1,3 @@
-version ?= latest
 NAMEIMAGE=app
 
 guard-%:
@@ -12,4 +11,7 @@ image:
 
 check: image
 	docker run -d -p 5000:5000 --name app_container $(NAMEIMAGE)
+
+test_coverage:
+	pytest /app/test/test_resources.py
 

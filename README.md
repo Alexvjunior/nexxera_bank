@@ -1,389 +1,101 @@
-MODELO DE DOCUMENTAÇÃO DE REST APIs 
-Este documento explicita com exemplos, como utilizar os recursos disponíveis no REST API de Reserva e Comparação de Hotéis. Assim como, as formas de se realizar uma requisição e suas possíveis respostas.
-
-1. Consultar Hotéis 
-
-Requisição
-Requisição para listar todos os hotéis do sistema, podendo opcionalmente receber filtros personalizados via path, de forma que se o cliente não definir nenhum parâmetro de consulta (nenhum filtro), os parâmetros receberão os valores padrão. 
-
-    • Possíveis parâmetros de consulta
-        ◦ cidade ⇒ Filtrar hotéis pela cidade escolhida. Padrão: Nulo 
-        ◦ estrelas_min ⇒ Avaliações mínimas de hotéis de 0 a 5. Padrão: 0
-        ◦ estrelas_max ⇒ Avaliações máximas de hotéis de 0 a 5. Padrão: 5
-        ◦ diaria_min ⇒ Valor mínimo da diária do hotel de R$ 0 a R$ 10.000,00. Padrão: 0
-        ◦ diaria_max ⇒ Valor máximo da diária do hotel de R$ 0 a R$ 10.000,00. Padrão: 10000
-        ◦ limit ⇒ Quantidade máxima de elementos exibidos por página. Padrão: 50
-        ◦ offset ⇒ Quantidade de elementos pular (geralmente múltiplo de limit). Padrão: 0
-
-Method
-URL            
-GET
-/hoteis?estrelas_min=4.5&limit=10&offset=0&diaria_max=600
-
-
-
-
-
-
-
-
-
-Resposta
-Como resposta, obtém-se uma lista de hotéis que se enquadram nos filtros da requisição acima:
-
-Status
-Response Body
-200 OK
-
-
-
-
-Requisição
-Requisição para visualizar os dados de um hotel específico. Faz-se um GET de /hoteis/{hotel_id}
-
-Method
-URL            
-GET
-/hoteis/bravo
-
-
-
-
-
-
-Resposta
-Como resposta, obtém-se um JSON com os dados do hotel requisitado.
-
-Status
-Response Body
-200 OK
-
-
-
-Requisição
-Requisição exemplo de quando o usuário pesquisar por um hotel que não existe.
-
-Method
-URL            
-GET
-/hoteis/hotel_id_que_nao_existe
-
-
-
-
-
-
-Resposta
-Como resposta, obtém-se uma mensagem de erro, dizendo que o hotel não foi encontrado.
-
-Status
-Response Body
-404 Not Found
-
-
-
-
-
-
-
-
-2. Cadastro de Usuário
-
-
-Requisição
-Exemplo de Requisição cadastrar um novo usuário.
-
-Method
-URL            
-POST
-/cadastro
-
-Header
-Content-Type
-application/json
-
-Request Body
-
- 
-
-Resposta
-Como resposta, obtém-se uma mensagem de sucesso informado que usuário foi criado, e status code 201 Created (Criado).
-
-Status
-Response Body
-201 Created
-
-
-
-
-
-
-Requisição
-Exemplo de Requisição para tentar cadastrar outro usuário com login “ana”. 
-
-Method
-URL            
-POST
-/cadastro
-
-Header
-Content-Type
-application/json
-
-
-
-
-Request Body
-
- 
-
-Resposta
-Como resposta, obtém-se uma mensagem de erro, informando que um usuário chamado “ana” já existe.
-
-Status
-Response Body
-400 Bad Request
-
-
-
-
-
-
-
-3. Login de Usuário
-
-
-Requisição
-Exemplo de Requisição logar com um usuário.
-
-Method
-URL            
-POST
-/login
-
-Header
-Content-Type
-application/json
-
-Request Body
-
- 
-
-Resposta
-Como resposta, obtém-se uma mensagem o token de acesso que será necessário para fazer as requisições que só podem ser feitas com login.
-
-Status
-Response Body
-200 OK
-
-
-
-
-
-
-
-Requisição
-Exemplo de Requisição para tentar fazer login com um usuário que não existe.
-
-Method
-URL            
-POST
-/login
-
-Header
-Content-Type
-application/json
-
-
-
-
-Request Body
-
- 
-
-Resposta
-Como resposta, obtém-se uma mensagem de erro 401 não autorizado, informando que usuário ou senha estão incorretos.
-
-Status
-Response Body
-401 unauthorized
-
-
-
-
-
-
-
-
-4. Criar Hotel 
-
-Requisição
-Exemplo de Requisição para criar um novo hotel: /hoteis/{hotel_id}
-
-Method
-URL            
-POST
-/hoteis/teste
-
-Header
-Content-Type
-application/json
-Authorization
-Bearer {token_de_acesso}
-
-Request Body
-
-
-
-Resposta
-Exemplos de Respostas: primeiro, a mensagem de sucesso ao criar pela primeira vez. Ao tentar criar novamente um hotel com id “teste”, o sistema emite uma mensagem de erro, informando que o id “teste já existe.
-
-Status
-Response Body
-201 Created
-
-400 Bad Request
-
-
-
-
-5. Atualizar Hotel 
-
-Requisição
-Exemplo de Requisição para atualizar um novo hotel: /hoteis/{hotel_id}
-
-Method
-URL            
-PUT
-/hoteis/teste
-
-Header
-Content-Type
-application/json
-Authorization
-Bearer {token_de_acesso}
-
-Request Body
-
-
-
-
-
-
-
-Resposta
-Exemplos de Respostas: primeiro, a mensagem de sucesso ao atualizar dados de hotel, e status code 200 OK. O PUT também consegue criar um novo hotel, como demonstrado no exemplo do hotel com id “novo”, emitindo assim uma mensagem de 201 Created a primeira vez, e 200 OK a partir da segunda requisição. 
-
-Status
-Response Body
-200 OK
-
-201 Created
-
-401 Unauthorized
-
-
-
-
-
-6. Deletar Hotel 
-
-Requisição
-Exemplo de Requisição para deletar um hotel: /hoteis/{hotel_id}
-
-Method
-URL            
-DELETE
-/hoteis/teste
-
-Header
-Authorization
-Bearer {token_de_acesso}
-
-Resposta
-Exemplos de Respostas, primeiro, a mensagem de sucesso ao deletar um hotel existente. Depois, ao tentar deletar o mesmo hotel, obtém-se o erro 404 not found, informando que o hotel não existe. No terceiro exemplo, o cliente esqueceu de enviar o token de autorização.
-
-Status
-Response Body
-200 OK
-
-404 Not 
-Found
-
-401 Unauthorized
-
-
-7. Logout de Usuário
-
-Requisição
-Exemplo de Requisição para fazer logout de usuário. Envia-se o token de acesso, e esse token é invalidado.
-
-Method
-URL            
-POST
-/logout
-
-Header
-Authorization
-Bearer {token_de_acesso}
-
-Resposta
-Exemplo de Resposta: mensagem de sucesso informando que o usuário foi deslogado. Ao tentar usar esse token de acesso em qualquer requisição, ele não funcionará mais, a não ser que o usuário faça o login.
-
-Status
-Response Body
-200 OK
-
-
-8. Consultar dados de Usuário
-
-Requisição
-Exemplo de Requisição para ler dados de usuário: /usuarios/{user_id}
-
-Method
-URL            
-GET
-/usuarios/2
-
-Header
-Content-Type
-application/json
-
-
-
-Resposta
-Como resposta, obtém-se os dados do usuário com id “2” exceto a senha.
-
-Status
-Response Body
-200 OK
-
-
-
-9. Deletar Usuário 
-
-Requisição
-Exemplo de Requisição para deletar um usuário: /usuarios/{user_id}
-
-Method
-URL            
-DELETE
-/usuarios/2
-
-Header
-Authorization
-Bearer {token_de_acesso}
-
-Resposta
-Exemplos de Respostas, primeiro, a mensagem de sucesso ao deletar um usuário existente. Depois, ao tentar deletar o mesmo usuário, obtém-se o erro 404 not found, informando que o usuário não existe ou não foi encontrado. No terceiro exemplo, o cliente enviou um token de autorização expirado.
-
-Status
-Response Body
-200 OK
-
-404 Not 
-Found
-
-401 Unauthorized
-
-
+# Nexxera Bank
+
+Welcome to the Nexxera Bank, this api will show you all the benefits of a RESTFUL API. Are you ready?
+
+## Installation
+
+Use the latest version of [python](https://www.python.org/downloads/) on your machine, be it linux, windowns or Mac.
+
+You must also have the [docker](https://www.docker.com/) installed on your machine
+
+Right after installing python, you will need to install [pytest](https://docs.pytest.org/en/stable/)
+```bash
+pip install pytest
+```
+
+## Usage
+
+Are we going to start using our API?
+
+1º- First, we must create the image of our API docker.
+```bash
+docker build -t app .
+```
+2º- Second, we must upload our container with this image that we have just created
+```bash
+docker run -d -p 5000:5000 --name app_container app
+```
+Awesome, know our API is running. A tip, if you already have the `make` tool installed on your machine, just run the following command:
+```bash
+make check
+```
+Very easy isn't it?
+
+Now we can perform all of our requests for our API. Here is the list of the features that we have in our API:
+```text
+http://localhost:5000/account/register - POST
+http://localhost:5000/account - GET
+http://localhost:5000/accounts - GET
+```
+These urls are for our account creation and viewing. To register an account, we must pass the body as follows:
+```json
+{
+"name":"person_name",
+"initial_balance":30
+}
+```
+In this case our `name` field is mandatory. To view a specific account, we must use the path `http://localhost:5000/account` and we have 3 types of filters passing as parameters:
+```text
+account_id
+limit
+offset
+```
+
+Our next paths are:
+```text
+http://localhost:5000/debit/register
+http://localhost:5000/debits
+```
+These urls are for our debits creation and viewing. To register an debit, we must pass the body as follows:
+```json
+{
+"value": 300,
+"account_id": 2,
+"description" : "description"
+}
+```
+In this way, all fields are mandatory. To search for all debits in an account, we must pass the `account_id` field in the filter and use the path `http://localhost:5000/debits`
+
+Our next paths are:
+```text
+http://localhost:5000/credit/register
+http://localhost:5000/credits
+```
+These urls are for our creditscreation and viewing. To register an credit, we must pass the body as follows:
+```json
+{
+"value": 300,
+"account_id": 2,
+"description" : "description"
+}
+```
+In this way, all fields are mandatory. To search for all creditsin an account, we must pass the `account_id` field in the filter and use the path `http://localhost:5000/credits`
+
+
+Our last path would be to visualize the extract, we only have visualization in that path, but with the following filters:
+```text
+account_id
+limit
+offset
+credit_debit
+```
+Our `account_id` filter is mandatory, but our other fields are not. To perform the search for credits only, just use the `credit_debit` filter to set it to 0 and to search only debits, just pass 1, if you want to bring everything, just don't pass the filter as parameter.
+
+## Tests
+Our best time has come, testing. For you who have the `make` command installed on your machine, just perform the `make test_coverage` command on your terminal, with this our API will show our tests. If you do not have the make command, do not be alarmed, in our installation we perform the installation of a python library, the pytest, to run it just at the end run the following command:
+```bash
+python -m pytest .\test\test_resources.py
+```
+
+## Contributing
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
